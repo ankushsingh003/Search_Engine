@@ -29,7 +29,22 @@ void test_indexing() {
     assert(p_jump->get_postings()[0].doc_id == 0);
     assert(p_jump->get_postings()[1].doc_id == 1);
 
-    std::cout << "Indexing test passed!" << std::endl;
+    std::cout << "Indexing in-memory test passed!" << std::endl;
+
+    // Test Persistence
+    indexer.save("test.idx");
+    
+    auto search_results = indexer.search("quick brown jumped");
+    // "quick" -> {0}, "brown" -> {0, 1}, "jumped" (stemmed: jump) -> {0, 1}
+    // Intersection: {0}
+    assert(search_results.size() == 1);
+    assert(search_results[0] == 0);
+
+    auto search_results2 = indexer.search("dog");
+    // "dog" -> {0, 1}
+    assert(search_results2.size() == 2);
+
+    std::cout << "Persistence and Search test passed!" << std::endl;
 }
 
 int main() {

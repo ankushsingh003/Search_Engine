@@ -16,7 +16,7 @@ void test_postings_serialization() {
     pl.serialize(encoded);
 
     const uint8_t* ptr = encoded.data();
-    PostingsList decoded_pl = PostingsList::deserialize(ptr, 2);
+    PostingsList decoded_pl = PostingsList::deserialize(ptr);
 
     auto& p1 = decoded_pl.get_postings()[0];
     assert(p1.doc_id == 10);

@@ -3,30 +3,33 @@
 
 namespace SearchEngine {
 
+// Helper function for C++11 compatibility
+static bool ends_with(const std::string& s, const std::string& suffix) {
+    return s.size() >= suffix.size() && s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
 std::string PorterStemmer::stem(const std::string& word) {
     if (word.length() <= 2) return word;
 
     std::string s = word;
 
     // Very simplified Porter-style rules for demonstration
-    // In a real project, we would use the full Porter or Snowball library.
-
     // Rule 1: s, es, ed, ing
-    if (s.ends_with("sses")) {
+    if (ends_with(s, "sses")) {
         s = s.substr(0, s.length() - 2);
-    } else if (s.ends_with("ies")) {
+    } else if (ends_with(s, "ies")) {
         s = s.substr(0, s.length() - 2);
-    } else if (s.ends_with("ss")) {
+    } else if (ends_with(s, "ss")) {
         // do nothing
-    } else if (s.ends_with("s")) {
+    } else if (ends_with(s, "s")) {
         s = s.substr(0, s.length() - 1);
     }
 
-    if (s.ends_with("eed")) {
+    if (ends_with(s, "eed")) {
         if (s.length() > 4) s = s.substr(0, s.length() - 1);
-    } else if (s.ends_with("ed")) {
+    } else if (ends_with(s, "ed")) {
         s = s.substr(0, s.length() - 2);
-    } else if (s.ends_with("ing")) {
+    } else if (ends_with(s, "ing")) {
         s = s.substr(0, s.length() - 3);
     }
 

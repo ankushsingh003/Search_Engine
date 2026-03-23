@@ -4,11 +4,11 @@
 
 namespace SearchEngine {
 
-std::vector<std::string> Tokenizer::tokenize(std::string_view text) {
+std::vector<std::string> Tokenizer::tokenize(const std::string& content) {
     std::vector<std::string> tokens;
     std::string current_token;
 
-    for (char c : text) {
+    for (char c : content) {
         if (std::isalnum(static_cast<unsigned char>(c))) {
             current_token += static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
         } else {

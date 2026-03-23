@@ -20,7 +20,7 @@ public:
     const std::vector<Posting>& get_postings() const { return postings; }
 
     void serialize(std::vector<uint8_t>& out) const;
-    static PostingsList deserialize(const uint8_t*& ptr, size_t num_postings);
+    static PostingsList deserialize(const uint8_t*& ptr);
 
 private:
     std::vector<Posting> postings;

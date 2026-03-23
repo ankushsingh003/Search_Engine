@@ -13,6 +13,7 @@ void PostingsList::add_occurrence(DocID doc_id, Position pos) {
 }
 
 void PostingsList::serialize(std::vector<uint8_t>& out) const {
+    VByteCodec::encode(static_cast<uint32_t>(postings.size()), out);
     DocID last_doc_id = 0;
     for (const auto& p : postings) {
         // Delta encode DocID
@@ -31,10 +32,11 @@ void PostingsList::serialize(std::vector<uint8_t>& out) const {
     }
 }
 
-PostingsList PostingsList::deserialize(const uint8_t*& ptr, size_t num_postings) {
+PostingsList PostingsList::deserialize(const uint8_t*& ptr) {
     PostingsList pl;
+    uint32_t num_postings = VByteCodec::decode(ptr);
     DocID last_doc_id = 0;
-    for (size_t i = 0; i < num_postings; ++i) {
+    for (uint32_t i = 0; i < num_postings; ++i) {
         DocID delta_doc = VByteCodec::decode(ptr);
         DocID doc_id = last_doc_id + delta_doc;
         last_doc_id = doc_id;
