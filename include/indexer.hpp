@@ -20,6 +20,8 @@ class Indexer {
 public:
     Indexer(InvertedIndex& idx);
     void index_document(DocID doc_id, const std::string& content);
+    void delete_document(DocID doc_id);
+    void update_document(DocID doc_id, const std::string& content);
     void save(const std::string& path);
     std::vector<RankedResult> search(const std::string& query);
     
@@ -32,7 +34,11 @@ private:
     InvertedIndex& index;
     StopWordFilter stop_words;
     std::vector<std::unique_ptr<SegmentReader> > segments;
-    std::set<DocID> all_doc_ids_;
+    std::set<DocID> all_internal_ids_;
+    std::set<DocID> deleted_internal_ids_;
+    std::map<uint32_t, DocID> external_to_internal_;
+    std::map<DocID, uint32_t> internal_to_external_;
+    DocID next_internal_id_;
 };
 
 } // namespace SearchEngine
