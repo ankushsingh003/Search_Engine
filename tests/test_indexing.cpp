@@ -38,7 +38,7 @@ void test_indexing() {
     // "quick" -> {0}, "brown" -> {0, 1}, "jumped" (stemmed: jump) -> {0, 1}
     // Intersection: {0}
     assert(search_results.size() == 1);
-    assert(search_results[0] == 0);
+    assert(search_results[0].doc_id == 0);
 
     auto search_results2 = indexer.search("dog");
     // "dog" -> {0, 1}
