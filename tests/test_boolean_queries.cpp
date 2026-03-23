@@ -22,7 +22,7 @@ void test_boolean_queries() {
     // dog -> {1, 2}, brown -> {0, 2}. NOT brown -> {1} (from universe {0, 1, 2}).
     // dog AND NOT brown -> {1}
     assert(results_not.size() == 1);
-    assert(results_not[0] == 1);
+    assert(results_not[0].doc_id == 1);
 
     // Parentheses test
     auto results_paren = indexer.search("(fox OR dog) AND brown");

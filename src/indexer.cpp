@@ -26,8 +26,9 @@ void Indexer::save(const std::string& path) {
     segments.push_back(std::unique_ptr<SegmentReader>(new MmapSegmentReader(path)));
 }
 
-std::vector<DocID> Indexer::search(const std::string& query) {
-    return QueryExecutor::execute(query, *this);
+std::vector<RankedResult> Indexer::search(const std::string& query) {
+    std::vector<DocID> matches = QueryExecutor::execute(query, *this);
+    return Ranker::rank(matches, query, *this);
 }
 
 std::vector<DocID> Indexer::search_term(const std::string& term) {
@@ -57,6 +58,35 @@ std::vector<DocID> Indexer::search_term(const std::string& term) {
 
 std::set<DocID> Indexer::get_all_doc_ids() const {
     return all_doc_ids_;
+}
+
+size_t Indexer::get_total_docs() const {
+    return all_doc_ids_.size();
+}
+
+std::map<DocID, uint32_t> Indexer::get_term_tfs(const std::string& term) {
+    std::string stemmed = PorterStemmer::stem(term);
+    std::map<DocID, uint32_t> tfs;
+
+    // From memory
+    const std::unordered_map<std::string, PostingsList>& index_map = index.get_index();
+    std::unordered_map<std::string, PostingsList>::const_iterator memory_it = index_map.find(stemmed);
+    if (memory_it != index_map.end()) {
+        const std::vector<Posting>& p_list = memory_it->second.get_postings();
+        for (size_t i = 0; i < p_list.size(); ++i) {
+            tfs[p_list[i].doc_id] += p_list[i].term_freq;
+        }
+    }
+
+    // From segments
+    for (size_t i = 0; i < segments.size(); ++i) {
+        std::vector<Posting> disk_postings = segments[i]->lookup(stemmed);
+        for (size_t j = 0; j < disk_postings.size(); ++j) {
+            tfs[disk_postings[j].doc_id] += disk_postings[j].term_freq;
+        }
+    }
+
+    return tfs;
 }
 
 } // namespace SearchEngine
