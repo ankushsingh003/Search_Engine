@@ -12,3 +12,6 @@ add_executable(SearchEngine main.cpp ${SOURCES})
 
 add_executable(test_pipeline tests/test_tokenizer.cpp src/tokenizer.cpp src/stop_word_filter.cpp src/porter_stemmer.cpp)
 target_include_directories(test_pipeline PRIVATE include)
+
+add_executable(test_indexing tests/test_indexing.cpp src/indexer.cpp src/inverted_index.cpp src/postings_list.cpp src/tokenizer.cpp src/stop_word_filter.cpp src/porter_stemmer.cpp)
+target_include_directories(test_indexing PRIVATE include)
