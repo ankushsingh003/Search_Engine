@@ -11,7 +11,8 @@ enum class TokenType {
     OR,
     NOT,
     LPAREN,
-    RPAREN
+    RPAREN,
+    PHRASE
 };
 
 struct QueryToken {

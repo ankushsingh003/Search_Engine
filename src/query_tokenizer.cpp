@@ -36,6 +36,19 @@ std::vector<QueryToken> QueryTokenizer::tokenize(const std::string& query) {
                 current_term.clear();
             }
             tokens.push_back({TokenType::RPAREN, ""});
+        } else if (c == '\"') {
+            if (!current_term.empty()) {
+                tokens.push_back({TokenType::TERM, current_term});
+                current_term.clear();
+            }
+            // Scan until next quote
+            std::string phrase;
+            i++;
+            while (i < query.length() && query[i] != '\"') {
+                phrase += query[i];
+                i++;
+            }
+            tokens.push_back({TokenType::PHRASE, phrase});
         } else {
             current_term += c;
         }

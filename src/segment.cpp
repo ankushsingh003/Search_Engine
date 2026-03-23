@@ -12,7 +12,13 @@ void SegmentWriter::write(const std::string& path, const InvertedIndex& index) {
 
     const auto& map = index.get_index();
     SegmentHeader header = {0x53455243, 1, static_cast<uint64_t>(map.size())};
-    out.write(reinterpret_cast<const char*>(&header), sizeof(header));
+    uint64_t dummy_offset = 0;
+    
+    struct {
+        SegmentHeader header;
+        uint64_t term_index_offset;
+    } initial_header = {header, dummy_offset};
+    out.write(reinterpret_cast<const char*>(&initial_header), sizeof(initial_header));
 
     // Term Index construction
     // We'll write the postings first, then the term index at the end or vice-versa.
@@ -137,6 +143,7 @@ MmapSegmentReader::MmapSegmentReader(const std::string& path)
 
     data_ = static_cast<const uint8_t*>(MapViewOfFile(mapping_handle_, FILE_MAP_READ, 0, 0, 0));
     if (data_ == NULL) {
+        std::cout << "[ERROR] MapViewOfFile failed" << std::endl;
         CloseHandle(mapping_handle_);
         CloseHandle(file_handle_);
         return;
@@ -183,10 +190,21 @@ std::vector<Posting> MmapSegmentReader::lookup(const std::string& term) const {
     if (!data_) return {};
 
     std::map<std::string, std::pair<uint64_t, uint32_t> >::const_iterator it = term_index_.find(term);
-    if (it == term_index_.end()) return {};
+    if (it == term_index_.end()) {
+        return {};
+    }
 
     const uint8_t* ptr = data_ + it->second.first;
-    return PostingsList::deserialize(ptr).get_postings();
+    PostingsList pl = PostingsList::deserialize(ptr);
+    return pl.get_postings();
+}
+
+std::vector<std::string> MmapSegmentReader::get_all_terms() const {
+    std::vector<std::string> terms;
+    for (auto const& pair : term_index_) {
+        terms.push_back(pair.first);
+    }
+    return terms;
 }
 
 } // namespace SearchEngine

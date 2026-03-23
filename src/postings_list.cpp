@@ -12,6 +12,10 @@ void PostingsList::add_occurrence(DocID doc_id, Position pos) {
     }
 }
 
+void PostingsList::add_posting(DocID doc_id, uint32_t freq, const std::vector<Position>& positions) {
+    postings.push_back({doc_id, freq, positions});
+}
+
 void PostingsList::serialize(std::vector<uint8_t>& out) const {
     VByteCodec::encode(static_cast<uint32_t>(postings.size()), out);
     DocID last_doc_id = 0;

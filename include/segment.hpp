@@ -25,6 +25,7 @@ class SegmentReader {
 public:
     virtual ~SegmentReader() = default;
     virtual std::vector<Posting> lookup(const std::string& term) const = 0;
+    virtual std::vector<std::string> get_all_terms() const = 0;
 };
 
 class FileSegmentReader : public SegmentReader {
@@ -42,6 +43,7 @@ public:
     explicit MmapSegmentReader(const std::string& path);
     ~MmapSegmentReader();
     std::vector<Posting> lookup(const std::string& term) const override;
+    std::vector<std::string> get_all_terms() const override;
 private:
     void* file_handle_;
     void* mapping_handle_;

@@ -10,6 +10,8 @@ namespace SearchEngine {
 class InvertedIndex {
 public:
     void add_term(const std::string& term, DocID doc_id, Position pos);
+    void add_postings_list(const std::string& term, const PostingsList& pl);
+    void clear() { index.clear(); }
     const PostingsList* lookup(const std::string& term) const;
     size_t size() const { return index.size(); }
     const std::unordered_map<std::string, PostingsList>& get_index() const { return index; }

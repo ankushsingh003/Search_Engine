@@ -1,4 +1,4 @@
-# Mini-Elasticsearch in C++
+# Mini_Search: High-Performance C++ Search Engine
 
 A production-pattern search engine with inverted indexing, TF-IDF ranking, disk persistence (mmap), and Boolean/phrase query support.
 

@@ -21,8 +21,8 @@ std::vector<QueryToken> QueryParser::parse(const std::string& query) {
     std::vector<QueryToken> infix_with_and;
     for (size_t i = 0; i < infix.size(); ++i) {
         if (i > 0) {
-            bool prev_is_operand = (infix[i-1].type == TokenType::TERM || infix[i-1].type == TokenType::RPAREN);
-            bool curr_is_operand = (infix[i].type == TokenType::TERM || infix[i].type == TokenType::LPAREN || infix[i].type == TokenType::NOT);
+            bool prev_is_operand = (infix[i-1].type == TokenType::TERM || infix[i-1].type == TokenType::PHRASE || infix[i-1].type == TokenType::RPAREN);
+            bool curr_is_operand = (infix[i].type == TokenType::TERM || infix[i].type == TokenType::PHRASE || infix[i].type == TokenType::LPAREN || infix[i].type == TokenType::NOT);
             
             if (prev_is_operand && curr_is_operand) {
                 infix_with_and.push_back({TokenType::AND, ""});
@@ -34,7 +34,7 @@ std::vector<QueryToken> QueryParser::parse(const std::string& query) {
     for (size_t i = 0; i < infix_with_and.size(); ++i) {
         const auto& token = infix_with_and[i];
         
-        if (token.type == TokenType::TERM) {
+        if (token.type == TokenType::TERM || token.type == TokenType::PHRASE) {
             postfix.push_back(token);
         } else if (token.type == TokenType::LPAREN) {
             ops.push(token);
