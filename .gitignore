@@ -1,0 +1,18 @@
+# Binary files
+*.o
+*.exe
+*.obj
+
+# Index files
+*.idx
+
+# Build directories
+build/
+bin/
+lib/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
